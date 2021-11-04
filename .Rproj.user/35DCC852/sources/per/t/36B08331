@@ -1,25 +1,25 @@
 {
-    "id": "452DD78E",
+    "id": "36B08331",
     "path": "C:/Users/raimu/Dropbox/Github/30DayMapChallenge/R/day02_lines.R",
     "project_path": "R/day02_lines.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "458323031",
     "contents": "",
     "dirty": false,
-    "created": 1635852268601.0,
+    "created": 1635893379536.0,
     "source_on_save": false,
     "relative_order": 2,
     "properties": {
         "tempName": "Untitled1",
-        "cursorPosition": "0,0",
-        "scrollLine": "0"
+        "cursorPosition": "61,68",
+        "scrollLine": "33"
     },
     "folds": "",
-    "lastKnownWriteTime": 1635852287,
+    "lastKnownWriteTime": 1635893385,
     "encoding": "ISO8859-1",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1635852287830,
+    "last_content_update": 1635893385111,
     "read_only": false,
     "read_only_alternatives": []
 }

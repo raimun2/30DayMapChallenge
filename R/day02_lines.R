@@ -46,7 +46,6 @@ puntos_contorno$ele = as.numeric(as.character(puntos_contorno$ele))
 puntos_contorno$linea = rep(1:nrow(linea_contorno),linea_contorno)
 
 
-
 maptype = 'toner-lite'
 map = suppressWarnings(suppressMessages(ggmap::get_map(bboxexp, maptype = maptype, zoom=6, source="stamen")))
 
