@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1636386783310.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "650ACE37",
+    "lastKnownWriteTime" : 1636386530,
+    "last_content_update" : 1636386783310,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "93463BBA",
+        "caption" : "andes_azul",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=andes_azul&cache_key=93463BBA",
+        "displayedObservations" : 13,
+        "environment" : "",
+        "expression" : "andes_azul",
+        "object" : "andes_azul",
+        "preview" : 0,
+        "totalObservations" : 13,
+        "variables" : 4
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1636385411693.000,
+    "dirty" : false,
+    "encoding" : "ISO8859-1",
+    "folds" : "",
+    "hash" : "3603230694",
+    "id" : "DEE141C5",
+    "lastKnownWriteTime" : 1636313467,
+    "last_content_update" : 1636313467,
+    "path" : "C:/Users/Raimundo/Dropbox/Github/30DayMapChallenge/R/day07_green.R",
+    "project_path" : "R/day07_green.R",
+    "properties" : {
+        "cursorPosition" : "26,62",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

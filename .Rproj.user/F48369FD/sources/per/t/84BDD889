@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1636376760894.000,
+    "dirty" : false,
+    "encoding" : "ISO8859-1",
+    "folds" : "",
+    "hash" : "3712046959",
+    "id" : "84BDD889",
+    "lastKnownWriteTime" : 1636386530,
+    "last_content_update" : 1636386530,
+    "path" : "C:/Users/Raimundo/Dropbox/Github/30DayMapChallenge/R/day08_blue.R",
+    "project_path" : "R/day08_blue.R",
+    "properties" : {
+        "cursorPosition" : "23,0",
+        "scrollLine" : "18",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
