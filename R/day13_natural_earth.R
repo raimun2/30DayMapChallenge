@@ -1,4 +1,4 @@
-pacman::p_load(rnaturalearth, sp, rnaturalearthhires, rnaturalearthdatam, raster, tidyverse, sf)
+pacman::p_load(rnaturalearth, sp, rnaturalearthhires, raster, tidyverse, sf, loscolores)
 
 glaciers <- ne_download(scale = 10, type = 'glaciated_areas', category = 'physical')
 oceans <- ne_download(scale = 10, type = 'ocean', category = 'physical')
@@ -11,11 +11,8 @@ test_spdf <- as(bio, "SpatialPixelsDataFrame")
 test_df <- as.data.frame(test_spdf)
 colnames(test_df) <- c("value", "x", "y")
 
-paletas <- read_rds("data/palettes.rds")
-
-paletas <- paletas[2,-65]
-rownames(paletas) <- NULL
-
+paletas <- loscolores(2, type = "d")
+  
 p<-ggplot() +  
   geom_polygon(data=oceans, aes(x=long, y=lat, group=group), 
               fill="darkblue", col="black") +
