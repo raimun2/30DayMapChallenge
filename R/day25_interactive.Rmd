@@ -1,0 +1,67 @@
+---
+title: "Access to the Mountain"
+author: "raimun2"
+date: "25-11-2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+pacman::p_load(leaflet, tidyverse, viridis)
+
+raster_segs <- read_rds(file = "data/raster_segs.rds")
+cerros <- read.table("data/cerros_unicos.csv", sep=";", dec=",", header = T)
+raster_manzanas <- read_rds( file = "data/raster_manzanas.Rda")
+
+data_hist <- read_rds("data/analisis_hist.rds")
+
+pal <- colorBin("viridis", domain = (0:110)/10, na.color = "transparent", reverse = TRUE)
+
+```
+
+Santiago is one of the capitals of the world with the largest number of mountains. If we take all the peaks close to the urban area, we can calculate the distance from each city block to the nearest summit.
+
+## Distance (km) from each block to the nearest hill
+
+```{r pressure, echo = FALSE, warning=FALSE, message=FALSE}
+leaflet() %>%
+  addTiles() %>%  
+  addProviderTiles("Stamen.TerrainBackground") %>% ## uso mapa topografico providers$OpenTopoMap
+  addRasterImage(raster_segs, col = "red") %>% 
+  addRasterImage(raster_manzanas, colors = pal) %>% 
+  addCircleMarkers(data = cerros, radius = 5, col = "blue", group = "Cumbres", popup = ~nombre) %>% 
+  addLegend(pal = pal, values=(0:110)/10)
+
+```
+
+If we analyze the distribution by quartiles, we can see that 25% of the population lives less than 2.8 km, 50% less than 4.5 km, 75% less than 6.4 km and 100% less than 10.2 km from a hill.
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+
+data_hist <- data_hist %>% uncount(NUMP)
+
+cuartiles <- quantile(data_hist$Distancia_minima)
+
+data_hist <- data_hist %>% sample_n(10000)
+
+ggplot(data_hist, aes(Distancia_minima)) +
+  geom_histogram() +
+    geom_vline(aes(xintercept = cuartiles[2],
+                  color = "25%"),
+              linetype = "solid",
+              size = 2) +
+    geom_vline(aes(xintercept = cuartiles[3],
+                  color = "50%"),
+              linetype = "solid",
+              size = 2) +  
+      geom_vline(aes(xintercept = cuartiles[4],
+                  color = "75%"),
+              linetype = "solid",
+              size = 2) +
+  theme_minimal() + 
+  scale_color_viridis_d(direction = -1)
+
+```
