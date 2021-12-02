@@ -9,7 +9,7 @@ account](https://www.twitter.com/raimun2)
 ![text](30dmpc_2021.png)
 
 Most of my posts were developed in R programming language, except for
-day 25 (map without a computer)
+day 15 (map without a computer)
 
 <h2>
 
@@ -194,6 +194,14 @@ day 25 (map without a computer)
 </h2>
 
 ![text](maps/day24_historical.png)
+
+<h2>
+
+[day25: interactive.](R/day25_interactive.R)
+
+</h2>
+
+![text](maps/day25_interactive.html){ width="100%", heigth="300px" }
 
 <h2>
 
