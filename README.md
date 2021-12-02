@@ -1,9 +1,12 @@
 30 Day Map Challenge
 ================
 
-This is the gallery of all my posts during 2021 \#30DayMapChallenge,
+This is the gallery of all my posts during 2021
+[\#30DayMapChallenge](https://github.com/tjukanovt/30DayMapChallenge),
 also shared through my [twitter
 account](https://www.twitter.com/raimun2)
+
+![text](30dmpc_2021.png)
 
 Most of my posts were developed in R programming language, except for
 day 25 (map without a computer)
