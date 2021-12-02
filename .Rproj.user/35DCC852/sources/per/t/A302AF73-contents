@@ -1,0 +1,37 @@
+---
+title: "30 Day Map Challenge"
+output: 
+  github_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is the gallery of all my posts during 2021 [#30DayMapChallenge](https://github.com/tjukanovt/30DayMapChallenge), also shared through my [twitter account](https://www.twitter.com/raimun2)
+
+![text](30dmpc_2021.png)
+
+Most of my posts were developed in R programming language, except for day 15 (map without a computer)
+
+```{r, results = 'asis', echo = FALSE, tidy = FALSE}
+plots <- list.files("maps/")
+
+for(i in plots){
+  scriptname <-  file.path("R", gsub("png|gif|html","R",i))
+  caption <- gsub("_", ": ",gsub(".png|.gif|html","",i))
+  filename <- file.path("maps", i)
+  title <- paste0('[',caption,'](',scriptname,')')
+  
+  cat("\n<h2> ", title, "</h2>\n")
+  cat('![text](',filename,'){ width="100%" }')
+  cat("  \n")
+  
+
+}
+
+
+
+
+```

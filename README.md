@@ -201,7 +201,7 @@ day 15 (map without a computer)
 
 </h2>
 
-![text](maps/day25_interactive.html){ width="100%", heigth="300px" }
+![text](maps/day25_interactive.html)
 
 <h2>
 
