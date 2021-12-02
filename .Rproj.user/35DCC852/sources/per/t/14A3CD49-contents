@@ -1,0 +1,299 @@
+---
+title: "CajÃ³n del Mapocho"
+author: "por @raimun2"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 2
+    theme: journal
+---
+
+
+El rio Mapocho sin duda es un Ã­cono de la geografÃ­a de Santiago, donde sus aguas han dado forma a nuestra ciudad desde que los pueblos picunches e incas se asentaron en este valle central de Chile. 
+
+Sus aguas nacen desde la base del Cerro el Plomo, o Apu Wamani, protector del valle del Mapocho, el cual ha sido visitado por los habitantes de esta zona desde tiempos inmemoriales. 
+
+El cajÃ³n del Rio Mapocho ha forjado por lo tanto la cultura de montaÃ±a de nuestra capital, presentando diversos hitos geogrÃ¡ficos e histÃ³ricos que se encuentran a lo largo de su extensiÃ³n. 
+
+La ruta el CajÃ³n del Mapocho recorre algunos de estos hitos, conectando en un ciclo cerrado diversos senderos que permiten hacerse una buena idea de la grandeza y crudeza de la montaÃ±a que rodea a Santiago de Chile. 
+
+ArmÃ© esta ruta porque disfruto de correr por los cerros, la ultradistancia y el desafÃ­o de la resistencia humana, y tome inspiraciÃ³n de otros desafios locales como la [Andes Azul Round](http://matt-maynard.com/mountains/andes-azul-round/). AdemÃ¡s, como habitante de este valle, muchos de estos hitos me conectan con mi historia, mis recuerdos, mi familia y con nuestro territorio. 
+
+El primer intento de esta ruta fue completado el [20 de Noviembre de 2020](https://www.strava.com/activities/4367078150) por RenÃ© Castel, Benjamin Perez y mi persona en modo autosuficiencia, en un tiempo de 17 horas y 44 minutos. El prÃ³ximo intento estÃ¡ programado para el viernes 17 de diciembre de 2021.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(GPStream)
+library(sp)
+library(leaflet)
+library(tidyverse)
+library(RColorBrewer)
+
+ruta_strm <- 
+  read_stream_file("cajon_del_mapocho.gpx") %>% 
+  rename_stream() %>% 
+  differential_stream() 
+
+
+ruta_sp <- SpatialPointsDataFrame(data=ruta_strm, 
+                                  coords = ruta_strm[,c("lon","lat")], 
+                                  proj4string=CRS("+proj=longlat +datum=WGS84"))
+
+
+PCS <- c(9.65, 22.05, 33.35, 42.05, 45.7, 50.82, 63.5, 81.55, 87.7)
+
+colores <- brewer.pal(n = 9, name = "Paired")
+
+tramo1 <- ruta_strm %>% filter(distance <= PCS[1]) 
+tramo2 <- ruta_strm %>% filter(distance > PCS[1] & distance <= PCS[2])
+tramo3 <- ruta_strm %>% filter(distance > PCS[2] & distance <= PCS[3])
+tramo4 <- ruta_strm %>% filter(distance > PCS[3] & distance <= PCS[4])
+tramo5 <- ruta_strm %>% filter(distance > PCS[4] & distance <= PCS[5])
+tramo6 <- ruta_strm %>% filter(distance > PCS[5] & distance <= PCS[6])
+tramo7 <- ruta_strm %>% filter(distance > PCS[6] & distance <= PCS[7])
+tramo8 <- ruta_strm %>% filter(distance > PCS[7] & distance <= PCS[8])
+tramo9 <- ruta_strm %>% filter(distance > PCS[8] & distance <= PCS[9])
+
+tabla <- data.frame( "Tramo" = c("Tramo 1","Tramo 2","Tramo 3","Tramo 4","Tramo 5","Tramo 6","Tramo 7","Tramo 8","Tramo 9","Total"),
+                     "Distancia" = c(sum(tramo1$delta_distance),
+                                     sum(tramo2$delta_distance),
+                                     sum(tramo3$delta_distance),
+                                     sum(tramo4$delta_distance),
+                                     sum(tramo5$delta_distance),
+                                     sum(tramo6$delta_distance),
+                                     sum(tramo7$delta_distance),
+                                     sum(tramo8$delta_distance),
+                                     sum(tramo9$delta_distance),
+                                     sum(ruta_strm$delta_distance)),
+                      "ElevGain" =  c(sum(tramo1$dplus),
+                                      sum(tramo2$dplus),
+                                      sum(tramo3$dplus),
+                                      sum(tramo4$dplus),
+                                      sum(tramo5$dplus),
+                                      sum(tramo6$dplus),
+                                      sum(tramo7$dplus),
+                                      sum(tramo8$dplus),
+                                      sum(tramo9$dplus),
+                                      sum(ruta_strm$dplus)))
+
+hitos <- data.frame(rbind(c(tramo1[1,c("lon","lat","ele")], "Puente Ãilhue"),
+                          c(tramo2[1,c("lon","lat","ele")], "Llanos de Javier"),
+                          c(tramo3[1,c("lon","lat","ele")], "Corral quemado"),
+                          c(tramo4[1,c("lon","lat","ele")], "La Parva"),
+                          c(tramo5[1,c("lon","lat","ele")], "Cancha de carreras"),
+                          c(tramo6[1,c("lon","lat","ele")], "Federacion"),
+                          c(tramo7[1,c("lon","lat","ele")], "Piedra numerada"),
+                          c(tramo8[1,c("lon","lat","ele")], "Refugio del Cepo"),
+                          c(tramo9[1,c("lon","lat","ele")], "La Ermita")))
+       
+hitos$lat <- as.numeric(hitos$lat)
+hitos$lon <- as.numeric(hitos$lon)
+
+hitossp <- SpatialPointsDataFrame(data=hitos, coords = hitos[,1:2], proj4string=CRS("+proj=longlat +datum=WGS84"))
+
+tramo1sp <- tramo1 %>% select(lon,lat) %>% 
+  SpatialPointsDataFrame( data = ., coords = .,proj4string=CRS("+proj=longlat +datum=WGS84"))
+tramo2sp <- tramo2 %>% select(lon,lat) %>% 
+  SpatialPointsDataFrame( data = ., coords = .,proj4string=CRS("+proj=longlat +datum=WGS84"))
+tramo3sp <- tramo3 %>% select(lon,lat) %>% 
+  SpatialPointsDataFrame( data = ., coords = .,proj4string=CRS("+proj=longlat +datum=WGS84"))
+tramo4sp <- tramo4 %>% select(lon,lat) %>% 
+  SpatialPointsDataFrame( data = ., coords = .,proj4string=CRS("+proj=longlat +datum=WGS84"))
+tramo5sp <- tramo5 %>% select(lon,lat) %>% 
+  SpatialPointsDataFrame( data = ., coords = .,proj4string=CRS("+proj=longlat +datum=WGS84"))
+tramo6sp <- tramo6 %>% select(lon,lat) %>% 
+  SpatialPointsDataFrame( data = ., coords = .,proj4string=CRS("+proj=longlat +datum=WGS84"))
+tramo7sp <- tramo7 %>% select(lon,lat) %>% 
+  SpatialPointsDataFrame( data = ., coords = .,proj4string=CRS("+proj=longlat +datum=WGS84"))
+tramo8sp <- tramo8 %>% select(lon,lat) %>% 
+  SpatialPointsDataFrame( data = ., coords = .,proj4string=CRS("+proj=longlat +datum=WGS84"))
+tramo9sp <- tramo9 %>% select(lon,lat) %>% 
+  SpatialPointsDataFrame( data = ., coords = .,proj4string=CRS("+proj=longlat +datum=WGS84"))
+
+```
+
+
+#### Distancia total:        87 km
+
+#### Desnivel positivo:    5100 m
+
+
+## Mapa y perfil de elevaciÃ³n
+
+```{r, echo=FALSE}
+
+
+leaflet(width = '100%') %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addProviderTiles(providers$OpenTopoMap) %>% ## uso mapa topografico
+  addCircleMarkers(data = tramo1sp, radius = 1, col = colores[1], group="Tramo 1") %>% 
+  addCircleMarkers(data = tramo2sp, radius = 1, col = colores[2], group="Tramo 2") %>% 
+  addCircleMarkers(data = tramo3sp, radius = 1, col = colores[3], group="Tramo 3") %>% 
+  addCircleMarkers(data = tramo4sp, radius = 1, col = colores[4], group="Tramo 4") %>% 
+  addCircleMarkers(data = tramo5sp, radius = 1, col = colores[5], group="Tramo 5") %>% 
+  addCircleMarkers(data = tramo6sp, radius = 1, col = colores[6], group="Tramo 6") %>% 
+  addCircleMarkers(data = tramo7sp, radius = 1, col = colores[7], group="Tramo 7") %>% 
+  addCircleMarkers(data = tramo8sp, radius = 1, col = colores[8], group="Tramo 8") %>% 
+  addCircleMarkers(data = tramo9sp, radius = 1, col = colores[9], group="Tramo 9") %>% 
+  addCircleMarkers(data = hitossp, radius = 5, col = "red", popup = hitossp$V4) %>% 
+  addLayersControl(
+          overlayGroups =c("Tramo 1", "Tramo 2", "Tramo 3", "Tramo 4", "Tramo 5", "Tramo 6", "Tramo 7", "Tramo 8", "Tramo 9"),
+          options = layersControlOptions(collapsed=FALSE)
+          ) 
+```
+
+
+```{r, fig.width=12, fig.height=4, echo=FALSE}
+
+PCSdf <- data.frame("xmin"=c(0,PCS[-9]), "xmax"=PCS, "fill" = colores)
+
+ggplot() +
+  geom_rect(data=PCSdf, aes(xmin=xmin, xmax = xmax, ymin = -Inf, ymax = Inf),fill=colores, alpha = 0.8) +
+  geom_line(data =ruta_strm, aes(distance, ele)) +
+  ylab("ElevaciÃ³n (msnm)") + 
+  xlab("Distancia") +
+  theme_minimal() +
+  theme(legend.position = "NULL") +
+  scale_x_continuous(breaks=seq(0, 87, 5))
+```
+
+
+###  Tramos de la ruta
+
+
+## Tramo 1: Puente Ãilhue - Corral Llanos de Javier 
+
+### [(Km 0 - Km 9.5)](https://www.strava.com/segments/26514256)
+
+La ruta comienza y termina en el puente Ãilhue, clÃ¡sico acceso a la cordillera desde donde se puede subir al cerro San RamÃ³n, Provincia, Ãipa, Alto del Naranjo entre otros. 
+
+Este acceso a la cordillera ha servido de lugar de iniciaciÃ³n en el montaÃ±ismo a diversas generaciones de Santiaguinos, y muchos desconocen que hacia el norte se puede subir el Cerro Pochoco, otro cerro clÃ¡sico que normalmente se sube desde el sector del ArrayÃ¡n. 
+
+Nuestro primer tramo lleva desde puente Ãilhue hacia el cerro Pochoco. Para subir al Pochoco, a 200 metros de la partida, hay que hacer la primera locura de esta ruta y se debe saltar a una canaleta para poder [subirse al filo del cerro](https://www.strava.com/segments/26514649).
+
+Esta pasada informal la conocÃ­ gracias a mi amigo [Matt Maynard](https://matt-maynard.com/), un especialista en encontrar pasadas libres a nuestras montaÃ±as. La primera parte es bien trabada, y no hay un sendero muy claro, pero luego de subir unos 300 metros de desnivel se empalma con un camino vehicular que sube en zig-zag hasta la cumbre.
+
+Al llegar a la cumbre del Pochoco se sigue subiendo por un sendero hacia la loma de la vaca y desde ahi se continua por el filo para llegar finalmente al corral Llanos de Javier. 
+
+Este lugar obtiene su nombre de su geografÃ­a, que corresponde a una planicie en medio de la montaÃ±a la cual se eleva por sobre los 1840 msnm y conecta senderos provenientes desde el Pochoco, del Santuario de la Naturaleza del ArrayÃ¡n y desde Los Maitenes. 
+
+## Tramo 2: Corral Llanos de Javier - Corral Quemado 
+
+### [(Km 9.5 - Km 22)](https://www.strava.com/segments/26514275)
+
+El segundo tramo sube desde Llanos de Javier hacia el cerro Boniguita, donde se encuentran unas torres de alta tension. Desde este punto se puede divisar el cerro Canoitas hacia el norte, y la ruta desciende hacia los Maitenes, pasando por Nido de Condores, un sector frecuentado por motociclistas.
+
+La ruta estÃ¡ bien marcada y es el primer tramo totalmente corrible de esta ruta. Luego de llegar a los Maitenes se desciende 3 kilometros por el camino a la disputada en direcciÃ³n a Corral Quemado.
+
+## Tramo 3: Corral Quemado - La Parva 
+
+### [(Km 22 - Km 33.5)](https://www.strava.com/segments/26514318)
+  
+En este punto se bifurca la via proveniente desde Santiago en 2 caminos, uno hacia los Centros de Ski y el camino a la Mina La Disputada. Corral Quemado formÃ³ parte del sistema de caminos incaicos y se dice que fue un importante punto de relevo para las ceremonias que se realizaban en la cumbre del cerro El Plomo. 
+
+Este es un punto estratÃ©gico ya que da comienzo a uno de los tramos de mayor desnivel positivo y cuenta con acceso vehicular, por lo que es un buen punto para dejar un dropbag con algo de agua y asÃ­ alivianar la carga desde la partida. 
+
+La ruta sigue desde este punto hacia la Parva, atravesando las curvas hasta Yerba Loca, y luego sube por el filo hasta el centro de Ski que se encuentra en las laderas del cerro que lleva el mismo nombre.
+
+Justo antes de llegar a La Parva se atraviesan algunos arroyos, lo que serÃ­a el primer punto natural de hidrataciÃ³n de la ruta, luego de cerca de 30 kilÃ³metros y 3500 metros de desnivel positivo. 
+
+## Tramo 4: La Parva - Cancha de Carreras 
+
+### [(Km 33.5 - Km 42)](https://www.strava.com/segments/26514349)
+
+En este centro de Ski recibe visitantes todo el invierno, pero en el verano tambiÃ©n, siendo un lugar frecuentado por montaÃ±istas que se aventuran a hacer cumbres como el cerro Pintor, Leonera, o el Plomo. 
+
+Quienes han hecho la ruta del CajÃ³n del Mapocho dicen que mentalmente el desafÃ­o comienza en La Parva. Este es el primer punto con baÃ±os despuÃ©s de comenzar, y es el lugar perfecto para recargar energÃ­a, ajustar equipamiento y dar comienzo a la secciÃ³n de alta montaÃ±a. 
+
+Subiendo desde el campamento Doite ubicado en la base del andarivel Las Ãguilas del centro de Ski, se pasa por la laguna Piuquenes, y se rodean los cerros Falsa Parva, Parva y Pintor, para eventualmente llegar a una extensa planicie de altura llamada Cancha de Carreras.
+
+## Tramo 5: Cancha de Carreras - Campamento FederaciÃ³n 
+
+### [(Km 42 - Km 45.5)](https://www.strava.com/segments/26514787) 
+  
+
+Esta planicie tiene una meseta rectangular que la cultura popular tambiÃ©n llama ovnipuerto, a 4150 msnm. En esta secciÃ³n es comÃºn encontrarse con nieve hasta los meses de primavera, por lo que si desean hacer un tiempo rÃ¡pido se recomienda intentar la ruta en el verano. 
+
+Desde Cancha de Carreras sigue la ruta hacia el cerro Leonera, pero luego de un par de kilÃ³metros se alcanza el punto mÃ¡s alto de la ruta a 4320 (msnm) donde hay que tomar un desvÃ­o para comenzar a descender hacia el oriente, bajando por la falda del cerro Leonera hasta el Campamento FederaciÃ³n.
+
+La secciÃ³n entre Cancha de Carreras y el Campamento FederaciÃ³n corresponde al segmento mas corto pero tambiÃ©n mas tÃ©cnico de nuestra ruta, por su altitud y por la pasada por el filo del Leonera.
+
+
+## Tramo 6: Campamento Federacion - Piedra Numerada 
+
+### [(Km 45.5 - Km 51)](https://www.strava.com/segments/26514412) 
+  
+El campamento FederaciÃ³n se encuentra en la base del cerro el Plomo y suele ser frecuentado por montaÃ±istas durante la temporada de primavera-verano. Desde FederaciÃ³n aÃºn quedan 42 kilÃ³metros de descenso para llegar a la meta. 
+
+El descenso continÃºa por un sendero de alta montaÃ±a, bien marcado, desde FederaciÃ³n hasta Piedra numerada. 
+
+Este caracterÃ­stico hito de la cordillera es un sector intermedio para los montaÃ±istas que visitan la zona, y se puede acceder desde Valle Nevado o La Parva. Este sector fue utilizado por los incas para como estaciÃ³n de descanso en el camino hacia la cumbre del Plomo.
+
+En este trayecto aparece un afluente del rio Mapocho llamado estero del Cepo, el cual proveerÃ¡ de agua durante el resto de la ruta hasta el kilÃ³metro 77. 
+
+
+## Tramo 7: Piedra Numerada - Refugio del Cepo 
+
+### [(Km 51 - Km 63.5)](https://www.strava.com/segments/26514447) 
+  
+En Piedra Numerada hay que tomar un desvÃ­o para continuar junto al rio, ya que la ruta mas frecuentada se devuelve hacia los centros de Ski. 
+
+En este punto es clave tomar la decisiÃ³n si seguir en ruta, o si aborta misiÃ³n y se devuelve hacia La Parva, la cual estÃ¡ a 8 kilÃ³metros.
+
+El tramo entre piedra numerada y el refugio del Cepo sigue el curso del rio Cepo, y es un tramo donde el rastro humano se pierde casi completamente. Dado esto es dificil identificar la mejor huella, y suelen verse senderos de animales a ambos lados del rio. 
+
+Si continÃºa bajando por el rio Cepo, luego de varios kilÃ³metros llega a un refugio de arrieros ubicado en la profundidad del cajÃ³n, en la orilla norte del rio. Este refugio se puede divisar desde el camino a Valle Nevado, y es uno de los pocos hitos de evidencia humana en este sector del valle. 
+
+## Tramo 8: Refugio del Cepo - La Ermita 
+
+### [(Km 63.5 - Km 81.5)](https://www.strava.com/segments/26514483)
+
+Al refugio del rio Cepo se puede llegar desde el camino a Valle nevado tambiÃ©n, por lo que se tiene un par de rutas de escape en caso de tener contratiempos. 
+
+Un poco mÃ¡s abajo del refugio, el rio Cepo se junta con otros afluentes para transformarse en el rio Molina. 
+
+En este tramo el cajÃ³n se va angostando y la ruta de los arrieros ancestrales fue optimizada con 7 cruces al rio antes de mantenerse por la ladera sur. En estos cruces es necesario llevar bastones debido a la fuerza del caudal.
+
+Dado que los cruces del rio pueden ser complejos, y a esta altura ya se llevan mas de 65 kilÃ³metros recorridos, se recomienda planificar la pasada por estos cruces con luz de dÃ­a. 
+
+Luego del ultimo cruce del rio Molina en el kilometro 77 se llega a Antahuaya, un centro de eventos en la montaÃ±a y ya se empieza a olfatear la civilizacion. Luego de 4 kilometros por caminos vehiculares se llega a la Ermita donde el rio Molina se junta con el rio San Francisco para dar nombre al rio Mapocho. 
+
+## Tramo 9: La Ermita - Puente Ãilhue 
+
+[(Km 81.5 - Km 87)](https://www.strava.com/segments/26514504)
+
+La Ermita es el Ãºltimo hito de la ruta y corresponde a un lugar de encuentro para deportistas de montaÃ±a, especialmente ciclistas que suben al cajÃ³n durante todo el aÃ±o. 
+
+Luego de 6 kilÃ³metros por un camino vehicular de tierra que va por la orilla sur del cajÃ³n se llega de vuelta al punto de origen, el puente Ãilhue.
+
+</details>
+
+
+## [GPX de la ruta](./cajon_del_mapocho.gpx) 
+
+
+## [Tabla de Distancias](https://docs.google.com/spreadsheets/d/1gXVkYR1aznKo8HUoBd68Rq8AHgwLSCYWH52IdPTPYsg/edit?usp=sharing)
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+library(DT)
+library(googlesheets4)
+library(googledrive)
+
+options(gargle_oauth_cache = ".secrets")
+drive_auth(cache = ".secrets", email = "raimundosanchezu@gmail.com")
+gs4_auth(token = drive_token())
+
+
+tabla_dist <- read_sheet("https://docs.google.com/spreadsheets/d/1gXVkYR1aznKo8HUoBd68Rq8AHgwLSCYWH52IdPTPYsg/edit?usp=sharing")
+tabla_dist$`Tiempo 2020` <- substr(as.character(tabla_dist$`Tiempo 2020`),12,22)
+tabla_dist$Tramo <- c(1:9,NA)
+
+datatable(tabla_dist, rownames = FALSE, filter="none", 
+          options = list(pageLength = 11, scrollX=F, searching=F, ordering=F, lengthChange = F, paging=F, info=F) ) %>% 
+            formatPercentage(c("% Distancia acumulada", "% Desnivel Acumulado", "% Distancia Eq acumulada"), 0)
+
+
+```
