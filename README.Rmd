@@ -1,0 +1,25 @@
+---
+title: "30 Day Map Challenge"
+author: "@raimun2"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 2021
+
+This is the gallery of all my posts during 2021 #30DayMapChallenge, also shared through [twitter](https://www.twitter.com/raimun2)
+
+```{r, results = 'asis', echo = FALSE}
+plots <- list.files("maps/")
+   for(i in plots){
+     scriptname <-  file.path("R", gsub("png|gif","R",i))
+     caption <- gsub("_", ": ",gsub(".png|.gif","",i))
+     filename <- file.path("maps", i)
+      cat(  paste0("[",caption,"](",scriptname,")"),"\n", "![text](",filename,")")
+    }
+
+
+```
