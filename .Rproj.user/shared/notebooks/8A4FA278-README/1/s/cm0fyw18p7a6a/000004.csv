@@ -1,6 +1,7 @@
-"0","title
+"0","cat('![text](',filename,'){ width=""100%"" }')
 "
-"1","[1]"
-"1"," ""[day30: meta](R/day30_meta.R)"""
-"1","
-"
+"1","![text]("
+"1"," "
+"1","maps/day30_meta.png"
+"1"," "
+"1","){ width=""100%"" }"
