@@ -63,7 +63,7 @@ clproj$color <- sample(colors(), 2446, replace = TRUE)
 
 cl.bb <- clproj %>% st_bbox()
 
-png(filename = "maps/day28_notflat2.png", width=13, height=9.56, units = "in", res = 300)
+png(filename = "maps/day28_notflat2.png", width=13, height=9.56, units = "in", res = 500)
 
 tm_shape(clproj, bbox = cl.bb) + 
   tm_polygons(col="color", legend.show = FALSE, palette = "Pastel2") +
