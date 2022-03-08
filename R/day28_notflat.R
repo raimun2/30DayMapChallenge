@@ -1,6 +1,9 @@
 pacman::p_load(tmap, sf, loscolores, rgeos, tidyverse, raster, sp, osmdata, rnaturalearth, rnaturalearthhires, xml2, XML, ggthemes, spdep)
 
-spdf_regiones <- ne_states(country = 'chile')
+comunas <- chilemapas::mapa_comunas
+
+spdf_comunas <-  as(comunas$geometry, 'Spatial')
+spdf_comunas$comuna <- comunas$codigo_comuna
 
 extractCoords <- function(sp.df)
 {
@@ -54,18 +57,21 @@ proj_raimun2 <- function(spdf){
   
 }
 
-clproj <- proj_raimun2(spdf_regiones)
+clproj <- proj_raimun2(spdf_comunas)
+clproj$color <- sample(colors(), 2446, replace = TRUE)
+
 
 cl.bb <- clproj %>% st_bbox()
 
-png(filename = "maps/day28_notflat.png",width=13, height=9.56, units = "in", res = 300)
+png(filename = "maps/day28_notflat2.png", width=13, height=9.56, units = "in", res = 300)
 
 tm_shape(clproj, bbox = cl.bb) + 
-  tm_fill(col="region",legend.show = FALSE, palette = loscolores::loscolores(2,15,"d")) +
+  tm_polygons(col="color", legend.show = FALSE, palette = "Pastel2") +
   tm_graticules( x = c(-180,-150,-125,-100,-75,-50,-25,0, 25,50,75,100,125,150), 
                  y = c(-70,-75,-80,-85,-89.9), 
                  labels.col = "white", col="grey90") +
   tm_layout(main.title = "Chilean conical projection", main.title.position = "center", main.title.size = 5) +
-  tm_credits("created by @raimun2", position = c("center", "BOTTOM"), size=1)
+  tm_credits("by @raimun2", position = c("center", "BOTTOM"), size=1) +
+  tmap_options(max.categories = 2446)
 
 dev.off()
